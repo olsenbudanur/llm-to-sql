@@ -1,10 +1,10 @@
-import { LLMToSQL } from '../src';
+import { LLMToSQL } from '../src/llm-to-sql';
 import { OpenAIChatApi } from 'llm-api';
 import { Sequelize } from 'sequelize';
 
 // deactivate test
 
-test('hyd', async () => {
+test.skip('hyd', async () => {
   const llmApi = new OpenAIChatApi({
     apiKey: '',
   }, {
