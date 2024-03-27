@@ -1,3 +1,12 @@
+import { 
+    OpenAIConfig as LLMAPIConfig, 
+    ModelConfig as LLMAPIModelConfig 
+} from 'llm-api'
+
+import { 
+    Options as SequelizeOptions 
+} from 'sequelize';
+
 /**
  * This is the type of the data that will be passed to the function.    
  */
@@ -13,5 +22,16 @@ export interface LLMToSQLResponse {
 }
 
 /**
- * This is the data  todo
+ * This is the information needed to init a llm-api instance.
  */
+export type { LLMAPIConfig };
+
+/**
+ * This is the information needed to init a llm-api instance.
+ */
+export type { LLMAPIModelConfig };
+
+/**
+ * This is the information needed to init a sequelize instance.
+ */
+export type { SequelizeOptions };

@@ -10,7 +10,10 @@ import { OpenAIChatApi } from "llm-api"
 //
 // Internal types for the LLMToSQL class
 import {
-  LLMToSQLResponse 
+  LLMToSQLResponse,
+  LLMAPIConfig,
+  LLMAPIModelConfig,
+  SequelizeOptions
 } from "./utils/types"
 //
 // The prompts/queries
@@ -51,23 +54,65 @@ export class LLMToSQL {
      */
     private userProvidedSqlInformation: string | undefined = undefined;
 
+    
     /**
-     * The constructor for the LLMToSQL class.
+     * This is the constructor for the LLMToSQL class. There are a few ways to initialize the class:
      * 
-     * @param llmApi the LLM interface to use
-     * @param sequelize the ORM to use
-     * @param sqlInfo SQL information if ORM is not provided
+     * 1- Provide an instance of the LLM API and an instance of the ORM.
+     * 2- Provide an instance of the LLM API and the configuration for the ORM.
+     * 3- Provide an instance of the LLM API and the SQL schema information.
+     * 4- Provide the configuration for the LLM API and an instance of the ORM.
+     * 5- Provide the configuration for the LLM API and the configuration for the ORM.
+     * 6- Provide the configuration for the LLM API and the SQL schema information.
+     * 
+     * @param llmApi the LLM API instance to use (Either this or llmApiConfig and llmApiModelConfig must be provided)
+     * @param llmApiConfig the LLM API configuration to use (Either this or llmApi must be provided)
+     * @param llmApiModelConfig the LLM API model configuration to use (Either this or llmApi must be provided)
+     * @param sequelize the ORM instance to use (Either this or sequelizeOptions must be provided)
+     * @param sequelizeOptions the ORM configuration to use (Either this or sequelize must be provided)
+     * @param sqlInfo the SQL schema information to use (Either this or sequelize must be provided)
      */
-    constructor(llmApi: OpenAIChatApi, sequelize: Sequelize | undefined, sqlInfo: string | undefined) {
+    constructor(
+      llmApi?: OpenAIChatApi,
+      llmApiConfig?: LLMAPIConfig,
+      llmApiModelConfig?: LLMAPIModelConfig,
+      sequelize?: Sequelize,
+      sequelizeOptions?: SequelizeOptions,
+      sqlInfo?: string
+    ) {
       //
       // If user provides sequelize, they should not provide SQL information and vice versa
       if ((sequelize === undefined && sqlInfo === undefined) || (sequelize !== undefined && sqlInfo !== undefined)) {
         throw new Error("Either an ORM or SQL information must be provided, but not both.");
       }
 
-      this.sequelizeORM = sequelize;
+      //
+      // If user provides llmApi configs, we create an instance of llmApi using those configs
+      // else we use the llmApi instance provided by the user.
+      // If user provided both, or neither, throw an error.
+      if (llmApi === undefined && (llmApiConfig === undefined || llmApiModelConfig === undefined)) {
+        throw new Error("Either an llmApi instance or llmApi configs must be provided.");
+      } else if (llmApi === undefined) {
+        this.llmApi = new OpenAIChatApi(llmApiConfig!, llmApiModelConfig!);
+      } else {
+        this.llmApi = llmApi;
+      }
+
+      //
+      // Likewise, if user provides sequelize configs, we create an instance of sequelize using those configs
+      // else we use the sequelize instance provided by the user.
+      // If user provided both, or neither, throw an error.
+      if (sequelize === undefined && sequelizeOptions === undefined) {
+        throw new Error("Either an ORM instance or ORM configs must be provided.");
+      } else if (sequelize !== undefined) {
+        this.sequelizeORM = new Sequelize(sequelizeOptions!);
+      } else {
+        this.sequelizeORM = sequelize;
+      }
+
+      //
+      // If user provides SQL information, we store it for later use. If undefined, we will get it later.
       this.userProvidedSqlInformation = sqlInfo;
-      this.llmApi = llmApi;
     }
 
     /**
