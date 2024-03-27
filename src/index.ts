@@ -86,8 +86,8 @@ export class LLMToSQL {
       return results.map(row => Object.values(row).join(' | '));
     }
 
-    async validateDatabaseInformation(): Promise<void> {
-      console.log("validating database information...")
+    async validateDatabaseInformation(): Promise<boolean> {
+      console.log("validating database information...");
       //
       // First, verify the database information
       if (this.sequelizeORM === undefined) {
@@ -96,20 +96,25 @@ export class LLMToSQL {
         if (this.userProvidedSqlInformation === undefined) {
           throw new Error("SQL information must be provided if ORM is not provided.");
         }
-      }
-      else {
+      } else {
         //
         // Connect to the database
-        await this.sequelizeORM.authenticate();
-        const userDatabase = await this.sequelizeORM.getDatabaseName();
-        const schemaGetterSQL = databaseStructureGetterSQL.replace("{database}", userDatabase);
-
-        //
-        // Get the database information
-        await this.delay(500);
-        const databaseInfo = await this.sequelizeORM.query(schemaGetterSQL);
-        this.userProvidedSqlInformation = JSON.stringify(databaseInfo);
+        try {
+          await this.sequelizeORM.authenticate();
+          const userDatabase = await this.sequelizeORM.getDatabaseName();
+          const schemaGetterSQL = databaseStructureGetterSQL.replace("{database}", userDatabase);
+    
+          //
+          // Get the database information
+          await this.delay(500);
+          const databaseInfo = await this.sequelizeORM.query(schemaGetterSQL);
+          this.userProvidedSqlInformation = JSON.stringify(databaseInfo);
+        } catch (error) {
+          console.error("Error validating database information:", error);
+          return false;
+        }
       }
+      return true;
     }
 
     /**
@@ -125,8 +130,9 @@ export class LLMToSQL {
     async run(userQuery: string): Promise<string> {
       //
       // 1- Verify the database information
-      await this.validateDatabaseInformation();
-
+      if (!await this.validateDatabaseInformation()) {
+        throw new Error("Database information validation failed.");
+      }
       console.log("database info: ", this.userProvidedSqlInformation)
 
       //
