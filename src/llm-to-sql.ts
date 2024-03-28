@@ -196,6 +196,9 @@ export class LLMToSQL {
       }
 
       if (this.sequelizeORM !== undefined && execute) {
+        //
+        // #TODO Might want to wait on executing queries that are
+        // not SELECT queries. This is a potential risk for destructive queries :D
         try {
           let sqlResponse = await this.sequelizeORM.query(response.content!);
           result = {
