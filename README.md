@@ -26,7 +26,46 @@ or
     
 
 ## Usage
-Check out 
+Check out examples at https://github.com/olsenbudanur/llm-to-sql/blob/main/src/tests/example-usage.test.ts <br>
+Either pass in LLM API and Sequelize objects, 
+```typescript
+let args = {
+    llmApi: llmApiObj,
+    sequelize: sequelize,
+} as LLMToSQLArgs;
+```
+or define their configs and pass in configs
+```typescript
+let args = {
+    llmApiConfig: llmConfig,
+    llmApiModelConfig: llmModelConfig,
+    sequelizeOptions: sqlConfig,
+} as LLMToSQLArgs;
+```
+or give plain text description
+```typescript
+let databaseDescription = "a single table called instructors the following columns: id, name, email, phone, address, city, state, zip, country, and date_of_birth. The table name is 'instructors'."
+args.sqlInfo = databaseDescription;
+```
+
+Construct LLMToSQL object
+```typescript
+const llmToSQL = new LLMToSQL(args);
+```
+
+Example natural language prompt to SQL, 
+```typescript
+let response = await llmToSQL.run("Can you get all the instructors names?", execute=true);
+console.log("SQL Query: ", response.sqlQuery);
+console.log("Results: ", response.results);
+```
+output: <br>
+SQL Query:  SELECT name FROM instructor; <br>
+Results: [
+      [
+        { name: 'Srinivasan' },
+        { name: 'Wu' },
+....
 
 
 ## Contributing
