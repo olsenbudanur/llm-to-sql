@@ -11,9 +11,7 @@ import { OpenAIChatApi } from "llm-api"
 // Internal types for the LLMToSQL class
 import {
   LLMToSQLResponse,
-  LLMAPIConfig,
-  LLMAPIModelConfig,
-  SequelizeOptions
+  LLMToSQLArgs
 } from "./utils/types"
 //
 // The prompts/queries
@@ -22,6 +20,9 @@ import {
   userMessage,
   databaseStructureGetterSQL
 } from "./utils/prompts"
+
+//
+// Create unit tests for the LLMToSQL class using mocking libraries like jest-mock-extended.
 
 /**
  * This is a template for a class that converts LLM output to SQL queries.
@@ -64,6 +65,8 @@ export class LLMToSQL {
      * 5- Provide the configuration for the LLM API and the configuration for the ORM.
      * 6- Provide the configuration for the LLM API and the SQL schema information.
      * 
+     * //
+     * // Args destructured
      * @param llmApi the LLM API instance to use (Either this or llmApiConfig and llmApiModelConfig must be provided)
      * @param llmApiConfig the LLM API configuration to use (Either this or llmApi must be provided)
      * @param llmApiModelConfig the LLM API model configuration to use (Either this or llmApi must be provided)
@@ -71,14 +74,18 @@ export class LLMToSQL {
      * @param sequelizeOptions the ORM configuration to use (Either this or sequelize must be provided)
      * @param sqlInfo the SQL schema information to use (Either this or sequelize must be provided)
      */
-    constructor(
-      llmApi?: OpenAIChatApi,
-      llmApiConfig?: LLMAPIConfig,
-      llmApiModelConfig?: LLMAPIModelConfig,
-      sequelize?: Sequelize,
-      sequelizeOptions?: SequelizeOptions,
-      sqlInfo?: string
-    ) {
+    constructor(args: LLMToSQLArgs) {
+      //
+      // Destructure the arguments
+      const {
+        llmApi,
+        llmApiConfig,
+        llmApiModelConfig,
+        sequelize,
+        sequelizeOptions,
+        sqlInfo
+      } = args;
+
       //
       // Either an sequelize, sequelizeOptions or sqlInfo must be provided, but not multiple or none.
       // throw out an error if this condition is not met.

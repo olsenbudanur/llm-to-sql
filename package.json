@@ -20,6 +20,8 @@
     "ts-jest": "^29.1.2"
   },
   "dependencies": {
+    "jest-mock": "^29.7.0",
+    "jest-mock-extended": "^3.0.5",
     "llm-api": "^1.5.0",
     "mysql2": "^3.9.3",
     "node-sql-parser": "^5.0.0",
