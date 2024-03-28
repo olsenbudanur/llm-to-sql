@@ -17,13 +17,11 @@ LLMToSQL is a powerful npm library that allows you to seamlessly convert natural
 
 To install LLMToSQL, simply run the following command:
     
-    bash
     npm install llm-to-sql
     
 
 or
-    
-    bash
+
     yarn add llm-to-sql
     
 
