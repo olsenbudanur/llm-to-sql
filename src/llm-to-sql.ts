@@ -30,7 +30,7 @@ export class LLMToSQL {
     /**
      * The maximum number of trials to auto-heal the LLM model.
      */
-    public MAX_TRIALS = 5;
+    private MAX_TRIALS = 10;
 
     /**
      * The LLM interface to use. 
@@ -54,7 +54,6 @@ export class LLMToSQL {
      */
     private userProvidedSqlInformation: string | undefined = undefined;
 
-    
     /**
      * This is the constructor for the LLMToSQL class. There are a few ways to initialize the class:
      * 
@@ -81,9 +80,13 @@ export class LLMToSQL {
       sqlInfo?: string
     ) {
       //
-      // If user provides sequelize, they should not provide SQL information and vice versa
-      if ((sequelize === undefined && sqlInfo === undefined) || (sequelize !== undefined && sqlInfo !== undefined)) {
-        throw new Error("Either an ORM or SQL information must be provided, but not both.");
+      // Either an sequelize, sequelizeOptions or sqlInfo must be provided, but not multiple or none.
+      // throw out an error if this condition is not met.
+      if ((sequelize === undefined && sequelizeOptions === undefined && sqlInfo === undefined) ||
+          (sequelize !== undefined && sequelizeOptions !== undefined) ||
+          (sequelize !== undefined && sqlInfo !== undefined) ||
+          (sequelizeOptions !== undefined && sqlInfo !== undefined)) {
+        throw new Error("Either an ORM instance, ORM configs or SQL information must be provided.");
       }
 
       //
@@ -101,18 +104,16 @@ export class LLMToSQL {
       //
       // Likewise, if user provides sequelize configs, we create an instance of sequelize using those configs
       // else we use the sequelize instance provided by the user.
-      // If user provided both, or neither, throw an error.
-      if (sequelize === undefined && sequelizeOptions === undefined) {
-        throw new Error("Either an ORM instance or ORM configs must be provided.");
-      } else if (sequelize !== undefined) {
-        this.sequelizeORM = new Sequelize(sequelizeOptions!);
-      } else {
+      // We've already checked for the conditions where both, neither or multiple are provided.
+      if (sequelizeOptions !== undefined) {
+        this.sequelizeORM = new Sequelize(sequelizeOptions);
+      }
+      else if (sequelize !== undefined) {
         this.sequelizeORM = sequelize;
       }
-
-      //
-      // If user provides SQL information, we store it for later use. If undefined, we will get it later.
-      this.userProvidedSqlInformation = sqlInfo;
+      else {
+        this.userProvidedSqlInformation = sqlInfo;
+      }
     }
 
     /**
@@ -194,6 +195,8 @@ export class LLMToSQL {
             sqlQuery: response.content!,
             results: sqlResponse
           }
+          console.log("SQL query executed successfully.");
+          console.log("Results:", sqlResponse);
         }
         catch (error) {
           console.error("Error executing SQL query:", error);
@@ -225,6 +228,7 @@ export class LLMToSQL {
     private async validateDatabaseInformation(): Promise<boolean> {
       //
       // First, verify the database information
+      if (this.userProvidedSqlInformation !== undefined) return true;
       if (this.sequelizeORM === undefined) {
         //
         // If the user did not provide an ORM, they must provide SQL information
