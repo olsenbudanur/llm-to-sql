@@ -1,4 +1,4 @@
-import { LLMToSQL } from "../src/llm-to-sql";
+import { LLMToSQL } from "../llm-to-sql";
 import { OpenAIChatApi } from "llm-api";
 import { Sequelize } from "sequelize";
 import { mocked } from "jest-mock";

@@ -1,8 +1,8 @@
-import { LLMToSQL } from '../src/llm-to-sql';
+import { LLMToSQL } from '../llm-to-sql';
 import { OpenAIChatApi } from 'llm-api';
 import { Options, Sequelize } from 'sequelize';
 import { databseDescriptionFixture } from './fixtures/database-fixture';
-import { LLMToSQLArgs } from '../src/utils/types';
+import { LLMToSQLArgs } from '../utils/types';
 
 //
 // Before every test, set up the api key.
