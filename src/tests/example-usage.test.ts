@@ -1,7 +1,7 @@
 import { LLMToSQL } from '..';
 import { OpenAIChatApi } from 'llm-api';
 import { Options, Sequelize } from 'sequelize';
-import { databseDescriptionFixture } from './fixtures/database-fixture';
+import { databaseDescriptionFixture } from './fixtures/database-fixture';
 import { LLMToSQLArgs } from '../utils/types';
 
 //
@@ -139,7 +139,7 @@ test.skip('Live test, passing only the llm configs, and a description of the dat
   //
   // A better way to get the database description is through the following sql query.
   // SELECT table_name, column_name, data_type, is_nullable, column_key, column_default, extra FROM information_schema.columns WHERE table_schema = "{database_name}"
-  let databaseDescription = databseDescriptionFixture; // This is the description of the database, copy and paste it from the query above.
+  let databaseDescription = databaseDescriptionFixture; // This is the description of the database, copy and paste it from the query above.
   args.sqlInfo = databaseDescription;
   const llmToSQL2 = new LLMToSQL(args);
 
