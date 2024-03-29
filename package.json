@@ -29,8 +29,8 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  }, 
+  },
   "repository": {
-    "url": "https://github.com/olsenbudanur/llm-to-sql.git"
+    "url": "git+https://github.com/olsenbudanur/llm-to-sql.git"
   }
 }
