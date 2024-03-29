@@ -1,9 +1,9 @@
 /**
  * A SQL database structure, gotten from the following query:
- * 
+ *
  * SELECT table_name, column_name, data_type, is_nullable, column_key, column_default, extra FROM information_schema.columns WHERE table_schema = "TestIC";
  */
-export let databseDescriptionFixture = `
+export let databaseDescriptionFixture = `
 Current database: TestIC
 
 +------------+--------------+-----------+-------------+------------+----------------+-------+
@@ -56,4 +56,4 @@ Current database: TestIC
 | time_slot  | end_hr       | decimal   | YES         |            | NULL           |       |
 | time_slot  | end_min      | decimal   | YES         |            | NULL           |       |
 +------------+--------------+-----------+-------------+------------+----------------+-------+
-`
+`;

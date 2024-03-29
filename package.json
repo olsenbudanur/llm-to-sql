@@ -1,6 +1,6 @@
 {
   "name": "llm-to-sql",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert your text to executable sql statements",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -17,7 +17,8 @@
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
-    "ts-jest": "^29.1.2"
+    "ts-jest": "^29.1.2",
+    "tsup": "^8.0.2"
   },
   "dependencies": {
     "jest-mock": "^29.7.0",

@@ -1,4 +1,4 @@
-import { LLMToSQL } from '../llm-to-sql';
+import { LLMToSQL } from '..';
 import { OpenAIChatApi } from 'llm-api';
 import { Options, Sequelize } from 'sequelize';
 import { databseDescriptionFixture } from './fixtures/database-fixture';
@@ -11,16 +11,19 @@ beforeAll(() => {
 });
 
 test.skip('Live test, initiating the instances manually.', async () => {
-  const llmApiObj = new OpenAIChatApi({
-    apiKey: process.env.OPENAI_API_KEY,
-  }, {
-    maxTokens: 1000,
-    temperature: 0.5,
-    topP: 1,
-    frequencyPenalty: 0,
-    presencePenalty: 0,
-    model: 'gpt-3.5-turbo',
-  });
+  const llmApiObj = new OpenAIChatApi(
+    {
+      apiKey: process.env.OPENAI_API_KEY,
+    },
+    {
+      maxTokens: 1000,
+      temperature: 0.5,
+      topP: 1,
+      frequencyPenalty: 0,
+      presencePenalty: 0,
+      model: 'gpt-3.5-turbo',
+    },
+  );
 
   const sequelize = new Sequelize({
     dialect: 'mysql',
@@ -36,17 +39,20 @@ test.skip('Live test, initiating the instances manually.', async () => {
   } as LLMToSQLArgs;
 
   const llmToSQL = new LLMToSQL(args);
-  
+
   //
   // This will execute the query and return the results.
-  let response = await llmToSQL.run("Can you get all the instructors names?", true);
-  console.log("SQL Query: ", response.sqlQuery);
-  console.log("Results: ", response.results);
+  let response = await llmToSQL.run(
+    'Can you get all the instructors names?',
+    true,
+  );
+  console.log('SQL Query: ', response.sqlQuery);
+  console.log('Results: ', response.results);
 
   //
   // This will only return the SQL query.
-  response = await llmToSQL.run("Can you get all the instructors names?");
-  console.log("SQL Query: ", response.sqlQuery);
+  response = await llmToSQL.run('Can you get all the instructors names?');
+  console.log('SQL Query: ', response.sqlQuery);
 });
 
 test.skip('Live test, passing the configs of both sql and llm.', async () => {
@@ -56,7 +62,7 @@ test.skip('Live test, passing the configs of both sql and llm.', async () => {
 
   let llmModelConfig = {
     model: 'gpt-3.5-turbo',
-  }
+  };
 
   let sqlConfig = {
     dialect: 'mysql',
@@ -64,7 +70,7 @@ test.skip('Live test, passing the configs of both sql and llm.', async () => {
     username: 'root',
     password: '',
     database: 'TestIC',
-  } as Options
+  } as Options;
 
   let args = {
     llmApiConfig: llmConfig,
@@ -76,16 +82,18 @@ test.skip('Live test, passing the configs of both sql and llm.', async () => {
 
   //
   // This will execute the query and return the results.
-  let response = await llmToSQL.run("Can you get all the instructors names?", true);
-  console.log("SQL Query: ", response.sqlQuery);
-  console.log("Results: ", response.results);
+  let response = await llmToSQL.run(
+    'Can you get all the instructors names?',
+    true,
+  );
+  console.log('SQL Query: ', response.sqlQuery);
+  console.log('Results: ', response.results);
 
   //
   // This will only return the SQL query.
-  response = await llmToSQL.run("Can you get all the instructors names?");
-  console.log("SQL Query: ", response.sqlQuery);
+  response = await llmToSQL.run('Can you get all the instructors names?');
+  console.log('SQL Query: ', response.sqlQuery);
 });
-
 
 test.skip('Live test, passing only the llm configs, and a description of the database', async () => {
   let llmConfig = {
@@ -94,7 +102,7 @@ test.skip('Live test, passing only the llm configs, and a description of the dat
 
   let llmModelConfig = {
     model: 'gpt-3.5-turbo',
-  }
+  };
 
   let args = {
     llmApiConfig: llmConfig,
@@ -103,16 +111,16 @@ test.skip('Live test, passing only the llm configs, and a description of the dat
 
   //
   // The description can be natural language description of the database.
-  let databaseDescription = "a single table called instructors the following columns: id, name, email, phone, address, city, state, zip, country, and date_of_birth. The table name is 'instructors'."
+  let databaseDescription =
+    "a single table called instructors the following columns: id, name, email, phone, address, city, state, zip, country, and date_of_birth. The table name is 'instructors'.";
   args.sqlInfo = databaseDescription;
   const llmToSQL = new LLMToSQL(args);
 
   //
   // This will only return the SQL query.
-  let response = await llmToSQL.run("Can you get all the instructors names?");
-  console.log("SQL Query: ", response.sqlQuery);
+  let response = await llmToSQL.run('Can you get all the instructors names?');
+  console.log('SQL Query: ', response.sqlQuery);
 });
-
 
 test.skip('Live test, passing only the llm configs, and a description of the database gotten through manual sql query', async () => {
   let llmConfig = {
@@ -121,7 +129,7 @@ test.skip('Live test, passing only the llm configs, and a description of the dat
 
   let llmModelConfig = {
     model: 'gpt-3.5-turbo',
-  }
+  };
 
   let args = {
     llmApiConfig: llmConfig,
@@ -137,8 +145,6 @@ test.skip('Live test, passing only the llm configs, and a description of the dat
 
   //
   // This will only return the SQL query.
-  let response = await llmToSQL2.run("Can you get all the instructors names?");
-  console.log("SQL Query: ", response.sqlQuery);
+  let response = await llmToSQL2.run('Can you get all the instructors names?');
+  console.log('SQL Query: ', response.sqlQuery);
 });
-
-

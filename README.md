@@ -16,60 +16,71 @@ LLMToSQL is a powerful TypeScript npm library that allows you to seamlessly conv
 ## Installation
 
 To install LLMToSQL, simply run the following command:
-    
+
     npm install llm-to-sql
-    
 
 or
 
     yarn add llm-to-sql
-    
 
 ## Usage
-Check out examples at https://github.com/olsenbudanur/llm-to-sql/blob/main/src/tests/example-usage.test.ts <br>
-Either pass in LLM API and Sequelize objects, 
-```typescript
+
+```Javascript
+const { LLMToSQL } = require('llm-to-sql');
+
+// Run this to get your database schema
+
+//  SELECT (table_name, column_name, data_type,
+//  is_nullable, column_key, column_default, extra)
+//  FROM information_schema.columns
+//  WHERE table_schema = "{DATABASE_NAME}";
+
+const sqlInfo = `
+  Current database: TestIC
+  +------------+--------------+-----------+-------------+------------+----------------+-------+
+  | advisor    | s_ID         | varchar   | NO          | PRI        | NULL           |       |
+  | advisor    | i_ID         | varchar   | YES         | MUL        | NULL           |       |
+  | classroom  | building     | varchar   | NO          | PRI        | NULL           |       |
+  | classroom  | room_number  | varchar   | NO          | PRI        | NULL           |       |
+  | classroom  | capacity     | decimal   | YES         |            | NULL           |       |
+  | course     | course_id    | varchar   | NO          | PRI        | NULL           |       |
+  | course     | title        | varchar   | YES         |            | NULL           |       |
+  | course     | dept_name    | varchar   | YES         | MUL        | NULL           |       |
+  | course     | credits      | decimal   | YES         |            | NULL           |       |
+  | department | dept_name    | varchar   | NO          | PRI        | NULL           |       |
+  | department | building     | varchar   | YES         |            | NULL           |       |
+  | department | budget       | decimal   | YES         |            | NULL           |       |
+  | instructor | ID           | varchar   | NO          | PRI        | NULL           |       |
+  | instructor | name         | varchar   | NO          |            | NULL           |       |
+  | instructor | dept_name    | varchar   | YES         | MUL        | NULL           |       |
+  | instructor | salary       | decimal   | YES         |            | NULL           |       |`;
+
+let llmConfig = {
+  apiKey: YOUR_API_KEY,
+};
+
+let llmModelConfig = {
+  model: 'gpt-3.5-turbo',
+};
+
 let args = {
-    llmApi: llmApiObj,
-    sequelize: sequelize,
-} as LLMToSQLArgs;
-```
-or define their configs and pass in configs
-```typescript
-let args = {
-    llmApiConfig: llmConfig,
-    llmApiModelConfig: llmModelConfig,
-    sequelizeOptions: sqlConfig,
-} as LLMToSQLArgs;
-```
-or give plain text description
-```typescript
-let databaseDescription = "a single table called instructors the following columns: id, name, email, phone, address, city, state, zip, country, and date_of_birth. The table name is 'instructors'."
-args.sqlInfo = databaseDescription;
-```
+  llmApiConfig: llmConfig,
+  llmApiModelConfig: llmModelConfig,
+  sqlInfo: sqlInfo,
+};
 
-Construct LLMToSQL object
-```typescript
-const llmToSQL = new LLMToSQL(args);
-```
+const runner = new LLMToSQL(args);
 
-Example natural language prompt to SQL, 
-```typescript
-let response = await llmToSQL.run("Can you get all the instructors names?", execute=true);
-console.log("SQL Query: ", response.sqlQuery);
-console.log("Results: ", response.results);
-```
-output: <br>
-SQL Query:  SELECT name FROM instructor; <br>
-Results: [
-      [
-        { name: 'Srinivasan' },
-        { name: 'Wu' },
-....
+runner.run('get all the instructors').then((SQLStatement) => {
+  console.log(SQLStatement);
+});
 
+```
 
 ## Contributing
+
 Contributions are welcome! Feel free to submit issues or pull requests to improve the library.
 
 ## License
+
 LLMToSQL is [MIT licensed](https://opensource.org/licenses/MIT).
